@@ -1,0 +1,59 @@
+# Prompt starship — https://starship.rs/config/
+# Mismo prompt en zsh, bash y PowerShell.
+# Pensado para DevOps: muestra contexto de cloud/k8s/terraform SOLO cuando aplica.
+
+add_newline = true
+
+format = """
+$directory\
+$git_branch\
+$git_status\
+$terraform\
+$kubernetes\
+$aws\
+$azure\
+$gcloud\
+$cmd_duration
+$character"""
+
+[directory]
+truncation_length = 3
+truncate_to_repo = true
+
+[git_status]
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+
+[cmd_duration]
+min_time = 3000
+
+# --- Contextos DevOps ---
+
+[terraform]
+# solo versión/workspace dentro de dirs con terraform
+format = "[$symbol$workspace]($style) "
+disabled = false
+
+[kubernetes]
+# desactivado por defecto en starship; lo activamos
+disabled = false
+format = '[⎈ $context( \($namespace\))]($style) '
+# mostrar solo cuando estás en repos de infra (ajustá a gusto):
+detect_files = ['k8s', 'Chart.yaml', 'helmfile.yaml', 'kustomization.yaml']
+detect_extensions = []
+
+[aws]
+format = '[ $profile( \($region\))]($style) '
+# mostrar solo si hay credenciales/perfil activo
+expiration_symbol = "X"
+
+[azure]
+disabled = true   # activar si querés ver la subscription siempre
+
+[gcloud]
+disabled = true   # suele ser ruidoso; activar si lo querés
+
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"

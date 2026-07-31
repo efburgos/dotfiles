@@ -1,0 +1,19 @@
+#!/bin/bash
+# git pull de todos los repos declarados en ~/.gitrepos.
+# Migrado del fork viejo (utils/massive_pull.sh).
+set -e
+
+PROJECTS_FOLDER="${PROJECTS_FOLDER:-$HOME/git}"
+REPOS_FILE="${REPOS_FILE:-$HOME/.gitrepos}"
+
+[ -f "$REPOS_FILE" ] || { echo "No existe $REPOS_FILE"; exit 1; }
+cd "$PROJECTS_FOLDER"
+
+while read -r repo; do
+    { [[ "$repo" =~ ^#.*$ ]] || [[ -z "$repo" ]]; } && continue
+    clone_to=$(echo "$repo" | cut -f2 -d:)
+    if [[ -e $clone_to ]]; then
+        echo "Pulling $PROJECTS_FOLDER/$clone_to"
+        git -C "$PROJECTS_FOLDER/$clone_to" pull
+    fi
+done < "$REPOS_FILE"

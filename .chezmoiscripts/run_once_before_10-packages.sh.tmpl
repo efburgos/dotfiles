@@ -1,0 +1,37 @@
+#!/bin/bash
+# Instala los paquetes del sistema declarados en .chezmoidata/packages.yaml
+# Idempotente: chezmoi lo re-ejecuta solo si cambia la lista.
+set -euo pipefail
+
+{{ if eq .chezmoi.os "darwin" -}}
+# ---------- macOS ----------
+if ! command -v brew >/dev/null 2>&1; then
+  echo "Instalando Homebrew..."
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  eval "$(/opt/homebrew/bin/brew shellenv 2>/dev/null || /usr/local/bin/brew shellenv)"
+fi
+
+echo "Instalando paquetes de brew..."
+brew install {{ range .packages.darwin.brews }}{{ . }} {{ end }}
+
+echo "Instalando casks..."
+brew install --cask {{ range .packages.darwin.casks }}{{ . }} {{ end }} || true
+
+{{ else if eq .chezmoi.os "linux" -}}
+# ---------- Linux / WSL ----------
+sudo apt-get update
+sudo apt-get install -y {{ range .packages.linux.apt }}{{ . }} {{ end }}
+
+{{ if not .wsl -}}
+# Solo escritorio (no WSL)
+sudo apt-get install -y {{ range .packages.linux.apt_desktop }}{{ . }} {{ end }}
+{{ end -}}
+
+# En Ubuntu/Debian bat se instala como batcat; crear alias de binario
+if command -v batcat >/dev/null 2>&1 && ! command -v bat >/dev/null 2>&1; then
+  mkdir -p "$HOME/.local/bin"
+  ln -sf "$(command -v batcat)" "$HOME/.local/bin/bat"
+fi
+{{ end -}}
+
+echo "Paquetes del sistema OK"

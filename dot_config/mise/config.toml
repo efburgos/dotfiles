@@ -1,0 +1,18 @@
+# Versiones GLOBALES de herramientas (mise) — https://mise.jdx.dev/
+# Por proyecto: crear mise.toml en el repo del proyecto para pinnear versiones
+# (mise también respeta .terraform-version / .terragrunt-version de tfenv/tgenv).
+#
+# Este archivo lo escribe también `mise use --global`; la fuente de verdad
+# de QUÉ herramientas se instalan está en .chezmoidata/packages.yaml.
+
+[tools]
+terraform = "latest"
+terragrunt = "latest"
+opentofu = "latest"
+kubectl = "latest"
+helm = "latest"
+k9s = "latest"
+kustomize = "latest"
+
+[settings]
+experimental = true

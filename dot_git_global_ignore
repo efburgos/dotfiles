@@ -1,0 +1,9 @@
+.vscode/
+.idea/
+.DS_Store
+*.swp
+.terraform/
+crash.log
+*.tfstate
+*.tfstate.backup
+.terragrunt-cache/

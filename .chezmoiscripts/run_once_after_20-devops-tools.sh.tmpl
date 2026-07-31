@@ -1,0 +1,19 @@
+#!/bin/bash
+# Instala mise y las herramientas DevOps declaradas en packages.yaml
+# mise reemplaza a tfenv/tgenv/asdf: gestiona versiones global y por proyecto.
+set -euo pipefail
+
+export PATH="$HOME/.local/bin:$PATH"
+
+if ! command -v mise >/dev/null 2>&1; then
+  echo "Instalando mise..."
+  curl -fsSL https://mise.run | sh
+fi
+
+echo "Instalando herramientas DevOps con mise..."
+{{ range .packages.mise -}}
+mise use --global {{ . }}@latest
+{{ end -}}
+
+mise install
+echo "Herramientas DevOps OK ($(mise ls --global 2>/dev/null | wc -l) tools)"

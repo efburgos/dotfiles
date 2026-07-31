@@ -1,0 +1,25 @@
+#!/bin/bash
+# Configura el shell: antidote (plugins zsh), starship (prompt) y zsh por defecto
+set -euo pipefail
+
+# --- antidote: gestor de plugins zsh, liviano (reemplaza oh-my-zsh) ---
+if [ ! -d "$HOME/.antidote" ]; then
+  git clone --depth=1 https://github.com/mattmc3/antidote.git "$HOME/.antidote"
+fi
+
+# --- starship: prompt multi-shell (zsh/bash/pwsh, mismo prompt en todos lados) ---
+if ! command -v starship >/dev/null 2>&1; then
+{{ if eq .chezmoi.os "darwin" -}}
+  brew install starship
+{{ else -}}
+  curl -sS https://starship.rs/install.sh | sh -s -- -y -b "$HOME/.local/bin"
+{{ end -}}
+fi
+
+# --- zsh como shell por defecto ---
+if [ -n "${SHELL:-}" ] && [ "${SHELL##*/}" != "zsh" ] && command -v zsh >/dev/null 2>&1; then
+  echo "Cambiando shell por defecto a zsh (puede pedir password)..."
+  chsh -s "$(command -v zsh)" || echo "No se pudo cambiar el shell; hacelo a mano: chsh -s $(command -v zsh)"
+fi
+
+echo "Shell OK"

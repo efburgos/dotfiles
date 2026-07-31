@@ -1,0 +1,15 @@
+{{- /* Se ejecuta en `chezmoi init`: pregunta datos una sola vez y los guarda */ -}}
+{{- $name := promptStringOnce . "name" "Nombre para git" "Ezequiel Burgos" -}}
+{{- $email := promptStringOnce . "email" "Email para git" "efburgos@gmail.com" -}}
+
+{{- $wsl := false -}}
+{{- if eq .chezmoi.os "linux" -}}
+{{-   if contains "microsoft" (.chezmoi.kernel.osrelease | lower) -}}
+{{-     $wsl = true -}}
+{{-   end -}}
+{{- end -}}
+
+[data]
+    name = {{ $name | quote }}
+    email = {{ $email | quote }}
+    wsl = {{ $wsl }}

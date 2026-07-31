@@ -1,0 +1,71 @@
+# =============================================================
+# TODO el software del sistema, declarado en un solo lugar.
+# Editá estas listas y corré `chezmoi apply`: los scripts run_once
+# se re-ejecutan solos cuando su contenido cambia (y estas listas
+# forman parte de ese contenido).
+# Heredero de mac-brew.txt / linux-apt.txt del fork viejo.
+# =============================================================
+packages:
+  darwin:
+    brews:
+      - git
+      - curl
+      - wget
+      - jq
+      - yq
+      - ripgrep
+      - fzf
+      - bat
+      - eza
+      - tree
+      - htop
+      - tmux
+      - shellcheck
+      - gnupg
+      - watch
+      - awscli
+      - azure-cli
+      - oci-cli
+      - gh
+    casks:
+      - visual-studio-code
+      - docker-desktop
+      - google-chrome
+      - slack
+      - google-cloud-sdk
+  linux:
+    apt:
+      # básicos para operar este repo
+      - git
+      - curl
+      - wget
+      - zsh
+      - unzip
+      # terminal / productividad
+      - jq
+      - ripgrep
+      - fzf
+      - bat
+      - tree
+      - htop
+      - tmux
+      - shellcheck
+      - gnupg
+      - xclip
+      # python para CLIs de cloud
+      - python3
+      - python3-pip
+      - python3-venv
+    # Solo en Linux de escritorio (se saltean en WSL)
+    apt_desktop:
+      - flameshot
+  # Herramientas DevOps con versión gestionada por mise
+  # (se instalan en run_once_after_20-devops-tools.sh)
+  mise:
+    - terraform
+    - terragrunt
+    - opentofu
+    - kubectl
+    - helm
+    - k9s
+    - kustomize

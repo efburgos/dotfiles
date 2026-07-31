@@ -1,0 +1,44 @@
+[user]
+	name = {{ .name }}
+	email = {{ .email }}
+[init]
+	defaultBranch = main
+[color]
+	ui = true
+[alias]
+	s = status
+	p = pull
+	a = add -p
+	cm = commit -m
+	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+	lg1 = log --pretty=oneline
+	dc = diff --cached
+	# Diff de una revisión concreta
+	dr = "!f() { git diff \"$1\"^..\"$1\"; }; f"
+	sl = stash list
+	sa = stash apply
+	ss = stash save
+	# Borrar rama local y remota
+	bdel = "!f() { git branch -d \"$1\" && git push origin --delete \"$1\"; }; f"
+	# Listar aliases
+	alias = "!git config -l | grep alias | cut -c 7-"
+	sha = rev-parse --short HEAD
+[core]
+	excludesfile = ~/.git_global_ignore
+	editor = vim
+[push]
+	default = simple
+	autoSetupRemote = true
+[pull]
+	rebase = true
+[fetch]
+	prune = true
+[merge]
+	log = true
+[diff]
+	colorMoved = default
+# Cuando tengas tu clave GPG configurada, descomentá:
+#[user]
+#	signingkey = TU_KEY_ID
+#[commit]
+#	gpgsign = true

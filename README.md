@@ -1,59 +1,93 @@
+# dotfiles
+
+Dotfiles de Ezequiel gestionados con [chezmoi](https://www.chezmoi.io/).
+Funcionan en **macOS**, **Linux** y **Windows (WSL)** desde un único repo.
+
+## Instalación en una máquina nueva
+
+```sh
+sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply efburgos
 ```
-██████╗  ██████╗ ████████╗███████╗██╗██╗     ███████╗███████╗
-██╔══██╗██╔═══██╗╚══██╔══╝██╔════╝██║██║     ██╔════╝██╔════╝
-██║  ██║██║   ██║   ██║   █████╗  ██║██║     █████╗  ███████╗
-██║  ██║██║   ██║   ██║   ██╔══╝  ██║██║     ██╔══╝  ╚════██║
-██████╔╝╚██████╔╝   ██║   ██║     ██║███████╗███████╗███████║
-╚═════╝  ╚═════╝    ╚═╝   ╚═╝     ╚═╝╚══════╝╚══════╝╚══════╝
+
+Eso hace todo: instala chezmoi, clona este repo, te pregunta nombre/email para git
+(solo la primera vez), instala los paquetes del sistema, mise + herramientas DevOps,
+y enlaza todos los dotfiles.
+
+Alternativa si ya tenés el repo clonado:
+
+```sh
+./install.sh
 ```
 
-[![Build Status](https://travis-ci.org/alombarte/dotfiles.svg?branch=master)](https://travis-ci.org/alombarte/dotfiles)
+## Uso diario
 
-My collection of **dotfiles, software and scripts** used in Mac and Linux. When I have a new machine I just run `make`.
+| Comando | Qué hace |
+|---|---|
+| `chezmoi edit ~/.zshrc` | Edita el archivo *fuente* del dotfile |
+| `chezmoi apply` | Aplica los cambios a tu `$HOME` |
+| `chezmoi diff` | Muestra qué cambiaría antes de aplicar |
+| `chezmoi update` | `git pull` + apply (sincroniza otra máquina) |
+| `chezmoi cd` | Te lleva al repo fuente |
+| `chezmoi add ~/.algo` | Empieza a gestionar un archivo existente |
 
+## Estructura
 
-# Installation
-Clone the repository under `~/.dotfiles`:
+```
+.chezmoi.toml.tmpl          → config inicial (pregunta nombre/email una sola vez)
+.chezmoidata/packages.yaml  → TODO el software declarado en un solo lugar
+.chezmoiscripts/            → scripts de instalación (corren solos con chezmoi apply)
+    run_once_before_10-packages.sh.tmpl   → brew (Mac) / apt (Linux, WSL)
+    run_once_after_20-devops-tools.sh.tmpl → mise: terraform, terragrunt, kubectl…
+    run_once_after_30-shell.sh.tmpl        → antidote (plugins zsh) + starship
+dot_zshrc                   → ~/.zshrc (zsh + antidote + starship + mise)
+dot_zsh_plugins.txt         → ~/.zsh_plugins.txt (lista de plugins de antidote)
+dot_aliases                 → ~/.aliases
+dot_gitconfig.tmpl          → ~/.gitconfig (tu nombre/email vía template)
+dot_git_global_ignore       → ~/.git_global_ignore
+dot_config/starship.toml    → prompt (contextos de aws/gcloud/azure/k8s/terraform)
+dot_config/mise/config.toml → versiones globales de herramientas DevOps
+dot_local/bin/              → scripts útiles (massive-clone, massive-pull)
+```
 
-    git clone https://github.com/alombarte/dotfiles.git ~/.dotfiles
+### Cómo mapea al fork viejo (alombarte/dotfiles)
 
-Dependencies:
+| Fork viejo | Acá |
+|---|---|
+| `stow term git ...` (symlinks) | `chezmoi apply` (copia gestionada, funciona en Windows) |
+| `mac-brew.txt`, `linux-apt.txt`, `linux-snap.txt` | `.chezmoidata/packages.yaml` |
+| `packages/install.sh` + `packages/{Darwin,Linux}/*.sh` | `.chezmoiscripts/run_once_*` |
+| oh-my-zsh + powerlevel9k | antidote + starship |
+| `.gitconfig` con datos de Albert hardcodeados | `dot_gitconfig.tmpl` con tus datos |
+| `utils/massive_clone.sh`, `massive_pull.sh` | `dot_local/bin/` (en el PATH) |
+| Travis CI + shellcheck | GitHub Actions + shellcheck |
 
-- `make`
-- `curl`
-- `git`
+### Qué NO se migró (a propósito)
 
-Install all **selected software** (you might want to change it):
+- Temas de GNOME, tilix, terminator, dropbox, aliases de KrakenD, backup a S3 de Albert,
+  config de nvim de Albert. Si necesitás algo de eso, está en el fork viejo.
+- GPG signing de commits: desactivado por defecto. Cuando tengas tu clave,
+  descomentá la sección `[commit]` en `dot_gitconfig.tmpl`.
 
-	make packages
+## Herramientas DevOps (mise)
 
-    # or alternatively
-    
-    ./packages/install.sh
+Las versiones de `terraform`, `terragrunt`, `kubectl`, `helm`, `k9s`, etc. se gestionan
+con [mise](https://mise.jdx.dev/) (reemplaza tfenv/tgenv/asdf). Global en
+`~/.config/mise/config.toml`; por proyecto, un `mise.toml` o `.terraform-version`
+en el repo del proyecto pinnea la versión.
 
-Install a group of dotfiles in the HOME dir:
-   
-    stow term git
+Los CLIs de cloud (awscli, azure-cli, gcloud, oci) se instalan como paquetes del
+sistema — ver `packages.yaml`.
 
+## Windows
 
-## Software installed via package systems
-All the software installed through package systems (brew, apt, snap..) is declared in `.txt` files. Edit these files to select what is installed in your computer. Mac systems use only `brew`, while Linux use `apt` and `snap`.
+El uso principal es **WSL**: dentro de WSL esto se comporta como Linux normal
+(misma instalación de arriba). Los scripts detectan WSL y saltean lo que no aplica
+(apps de escritorio). Si algún día querés Windows nativo, chezmoi lo soporta:
+se agrega una rama `{{ if eq .chezmoi.os "windows" }}` en los templates y
+paquetes vía `winget`.
 
-**Linux**:
+## Máquinas con perfiles distintos (trabajo/personal)
 
-- linux-apt-uninstall.txt - Software that comes with Linux distributions, such as card games, that I don't need. Will be REMOVED.
-- linux-apt.txt - All the software installed using `apt-get install`
-- linux-brew.txt - Packages installed via [Snap](https://snapcraft.io/store)
-
-**Mac**:
-
-- mac-brew.txt - List of software installed using [brew](https://brew.sh/)
-
-Custom software (under `packages`):
-
-- `common`: software installed in both Mac and Linux
-- `Linux`
-- `Darwin` (Mac)
-
-## Dotfiles
-The dotfiles are managed using [stow](https://www.gnu.org/software/stow/), a small utility that manages symlinks for you.
+chezmoi permite variar config por máquina con templates. Ejemplo típico:
+email de trabajo en la laptop del trabajo — se agrega un prompt más en
+`.chezmoi.toml.tmpl` y se usa la variable en `dot_gitconfig.tmpl`.

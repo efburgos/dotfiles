@@ -1,0 +1,5 @@
+# Plugins de zsh gestionados por antidote (https://antidote.sh)
+# Tras editar: borrar ~/.zsh_plugins.zsh y abrir una shell nueva
+zsh-users/zsh-completions
+zsh-users/zsh-autosuggestions
+zsh-users/zsh-syntax-highlighting kind:defer

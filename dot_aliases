@@ -1,0 +1,48 @@
+# ~/.aliases — cargado desde .zshrc
+# Migrado y limpiado del fork viejo (fuera: krakend, spotifydl, gnome, etc.)
+
+# ----- Navegación / básicos -----
+command -v eza >/dev/null 2>&1 && alias ls='eza' && alias ll='eza -la --git'
+command -v bat >/dev/null 2>&1 && alias cat='bat -p'
+alias vi='vim'
+
+# ----- Git -----
+# pull de todos los repos del directorio actual
+alias gpa="find . -maxdepth 1 -type d -exec sh -c '(cd {} && [ -d .git ] && echo \"Pulling {}\" && git fetch -p && git pull)' ';'"
+# borrar ramas ya mergeadas
+alias dmb="git remote prune origin && git branch --merged | grep -v 'master' | grep -v 'main' | xargs -r git branch -d"
+# clone/pull masivo de repos declarados en ~/.gitrepos
+alias mclone='massive-clone'
+alias mpull='massive-pull'
+
+# ----- Docker -----
+alias docker-clean='docker container prune -f && docker volume prune -f && docker network prune -f'
+alias docker-clean-images='docker image prune'
+alias docker-destroy='docker system prune --force --all --volumes'
+
+# ----- Kubernetes -----
+alias k='kubectl'
+alias kx='kubectl config use-context'
+alias kns='kubectl config set-context --current --namespace'
+
+# ----- Terraform / Terragrunt -----
+alias tf='terraform'
+alias tfi='terraform init'
+alias tfp='terraform plan'
+alias tfa='terraform apply'
+alias tg='terragrunt'
+alias tgp='terragrunt plan'
+alias tga='terragrunt apply'
+
+# ----- Clouds -----
+alias awswho='aws sts get-caller-identity'
+alias azwho='az account show -o table'
+
+# ----- Varios -----
+alias weather='function _weather(){ curl "https://wttr.in/${1:-Buenos+Aires}"; }; _weather'
+
+# ----- Linux only -----
+if [[ "$(uname)" == "Linux" ]]; then
+  alias copy='xclip -selection clipboard'
+  command -v xdg-open >/dev/null 2>&1 && alias open='xdg-open'
+fi

@@ -1,0 +1,52 @@
+# ~/.zshrc — zsh + antidote + starship + mise
+# Gestionado por chezmoi: editar con `chezmoi edit ~/.zshrc` y `chezmoi apply`
+
+# ----- PATH -----
+export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+
+# ----- Historia -----
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=50000
+SAVEHIST=50000
+setopt SHARE_HISTORY HIST_IGNORE_ALL_DUPS HIST_IGNORE_SPACE HIST_REDUCE_BLANKS
+
+# ----- Opciones básicas -----
+setopt AUTO_CD INTERACTIVE_COMMENTS
+export EDITOR='vim'
+export LANG=en_US.UTF-8
+
+# ----- Completions -----
+autoload -Uz compinit && compinit
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'  # case-insensitive
+
+# ----- Plugins con antidote (lista en ~/.zsh_plugins.txt) -----
+if [[ -d "$HOME/.antidote" ]]; then
+  zsh_plugins="$HOME/.zsh_plugins"
+  [[ -f "${zsh_plugins}.txt" ]] || touch "${zsh_plugins}.txt"
+  fpath=("$HOME/.antidote/functions" $fpath)
+  autoload -Uz antidote
+  if [[ ! "${zsh_plugins}.zsh" -nt "${zsh_plugins}.txt" ]]; then
+    antidote bundle <"${zsh_plugins}.txt" >|"${zsh_plugins}.zsh"
+  fi
+  source "${zsh_plugins}.zsh"
+fi
+
+# ----- mise: versiones de terraform/terragrunt/kubectl/etc -----
+command -v mise >/dev/null 2>&1 && eval "$(mise activate zsh)"
+
+# ----- fzf (Ctrl-R historia, Ctrl-T archivos) -----
+if command -v fzf >/dev/null 2>&1; then
+  source <(fzf --zsh 2>/dev/null) || true
+fi
+
+# ----- Completions de clouds (solo si existen) -----
+command -v kubectl >/dev/null 2>&1 && source <(kubectl completion zsh)
+[[ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]] && source "$HOME/google-cloud-sdk/path.zsh.inc"
+[[ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]] && source "$HOME/google-cloud-sdk/completion.zsh.inc"
+
+# ----- Aliases -----
+[[ -f "$HOME/.aliases" ]] && source "$HOME/.aliases"
+
+# ----- Prompt: starship (config en ~/.config/starship.toml) -----
+command -v starship >/dev/null 2>&1 && eval "$(starship init zsh)"
