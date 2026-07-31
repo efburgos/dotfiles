@@ -15,7 +15,8 @@ echo "Instalando paquetes de brew..."
 brew install {{ range .packages.darwin.brews }}{{ . }} {{ end }}
 
 echo "Instalando casks..."
-brew install --cask {{ range .packages.darwin.casks }}{{ . }} {{ end }} || true
+# --adopt: si la app ya existe en /Applications (instalada a mano), brew la adopta
+brew install --cask --adopt {{ range .packages.darwin.casks }}{{ . }} {{ end }} || true
 
 {{ else if eq .chezmoi.os "linux" -}}
 # ---------- Linux / WSL ----------

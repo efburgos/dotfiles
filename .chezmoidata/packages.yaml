@@ -61,6 +61,7 @@ packages:
       - aider
       - opencode
     casks:
+      # instalados via brew hoy
       - claude-code
       - gcloud-cli
       - karabiner-elements
@@ -76,6 +77,32 @@ packages:
       - nvalt
       - scout
       - textmate
+      # instalados hoy FUERA de brew (en /Applications) — el script usa
+      # --adopt, así que brew los adopta sin reinstalar; en una máquina
+      # nueva se instalan solos
+      - iterm2
+      - visual-studio-code
+      - cursor
+      - docker-desktop
+      - lens
+      - ollama
+      - tailscale
+      - alfred
+      - stats
+      - betterdisplay
+      - monosnap
+      - brave-browser
+      - google-chrome
+      - google-drive
+      - discord
+      - whatsapp
+      # personales, descomentá si los querés en el bootstrap:
+      #- steam
+      #- battle-net
+      #- epic-games
+      #- whisky
+      #- anydesk
+      #- teamviewer
   linux:
     apt:
       # básicos para operar este repo
