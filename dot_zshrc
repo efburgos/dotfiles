@@ -37,7 +37,11 @@ command -v mise >/dev/null 2>&1 && eval "$(mise activate zsh)"
 
 # ----- fzf (Ctrl-R historia, Ctrl-T archivos) -----
 if command -v fzf >/dev/null 2>&1; then
-  source <(fzf --zsh 2>/dev/null) || true
+  if fzf --zsh >/dev/null 2>&1; then
+    source <(fzf --zsh)          # fzf >= 0.48 (brew, o apt reciente)
+  elif [[ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]]; then
+    source /usr/share/doc/fzf/examples/key-bindings.zsh   # fzf viejo de apt
+  fi
 fi
 
 # ----- Completions de clouds (solo si existen) -----

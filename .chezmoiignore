@@ -1,5 +1,6 @@
 # Archivos del repo que NO deben copiarse a $HOME
 README.md
+CLAUDE.md
 install.sh
 LICENSE
 .github

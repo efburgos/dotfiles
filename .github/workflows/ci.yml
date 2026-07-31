@@ -22,3 +22,36 @@ jobs:
             echo "== $f"
             sed -e 's/{{[^}]*}}//g' "$f" | shellcheck -s bash - || exit 1
           done
+
+  e2e-linux:
+    # Bootstrap COMPLETO y real en un Linux limpio: chezmoi + apt + mise +
+    # antidote + starship, y verificación de que todo quedó operativo.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalar chezmoi
+        run: sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
+      - name: chezmoi init --apply (no interactivo)
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          chezmoi init --apply --source="$GITHUB_WORKSPACE" \
+            --promptString "Nombre para git=CI Test" \
+            --promptString "Email para git=ci@test.local"
+      - name: Verificar resultado
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          set -x
+          # dotfiles aplicados
+          test -f ~/.zshrc && test -f ~/.aliases && test -f ~/.gitconfig
+          test -x ~/.local/bin/massive-clone
+          # identidad de git templada
+          git config --global user.name | grep -q "CI Test"
+          # herramientas de mise
+          eval "$(mise activate bash --shims)"
+          terraform --version | head -1
+          terragrunt --version | head -1
+          fzf --version
+          # el shell arranca sin errores y carga plugins/aliases
+          zsh -ic 'alias | grep -q "^dmb=" && echo "zsh OK"'
+          # starship instalado
+          starship --version | head -1

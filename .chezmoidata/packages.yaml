@@ -136,6 +136,7 @@ packages:
     - terraform
     - terragrunt
     - opentofu
+    - fzf        # garantiza fzf moderno (>=0.48, con --zsh) también en Linux/WSL
   # Globales de npm (inventario real: npm ls -g, 2026-07-31)
   npm_global:
     - pnpm

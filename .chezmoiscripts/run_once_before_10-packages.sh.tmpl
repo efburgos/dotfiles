@@ -20,7 +20,8 @@ brew install --cask --adopt {{ range .packages.darwin.casks }}{{ . }} {{ end }} 
 
 {{ else if eq .chezmoi.os "linux" -}}
 # ---------- Linux / WSL ----------
-sudo apt-get update
+# (|| true: que un repo de terceros roto no aborte todo el bootstrap)
+sudo apt-get update || echo "aviso: apt update falló en algún repo, sigo igual"
 sudo apt-get install -y {{ range .packages.linux.apt }}{{ . }} {{ end }}
 
 {{ if not .wsl -}}
