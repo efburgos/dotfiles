@@ -6,7 +6,7 @@ Funcionan en **macOS**, **Linux** y **Windows (WSL)** desde un único repo.
 ## Instalación en una máquina nueva
 
 ```sh
-sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply efburgos
+sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply <TU_USUARIO_GITHUB>
 ```
 
 Eso hace todo: instala chezmoi, clona este repo, te pregunta nombre/email para git
@@ -70,13 +70,23 @@ dot_local/bin/              → scripts útiles (massive-clone, massive-pull)
 
 ## Herramientas DevOps (mise)
 
-Las versiones de `terraform`, `terragrunt`, `kubectl`, `helm`, `k9s`, etc. se gestionan
-con [mise](https://mise.jdx.dev/) (reemplaza tfenv/tgenv/asdf). Global en
-`~/.config/mise/config.toml`; por proyecto, un `mise.toml` o `.terraform-version`
-en el repo del proyecto pinnea la versión.
+`terraform`, `terragrunt` y `opentofu` se gestionan con [mise](https://mise.jdx.dev/),
+que **reemplaza a tfenv/tgenv** y respeta los `.terraform-version` /
+`.terragrunt-version` que ya existan en tus proyectos — la migración es transparente.
+Global en `~/.config/mise/config.toml`; por proyecto, un `mise.toml` pinnea versiones.
 
-Los CLIs de cloud (awscli, azure-cli, gcloud, oci) se instalan como paquetes del
-sistema — ver `packages.yaml`.
+`kubectl`, `helm`, `kustomize`, `k9s`, `kubecm` y `flux` van por brew, igual que
+los CLIs de cloud (`oci-cli`, `awscli`, `azure-cli`, `gcloud-cli`) — ver `packages.yaml`.
+
+## Migración desde el setup anterior (Mac)
+
+Cuando confirmes que todo anda con el setup nuevo:
+
+```sh
+brew uninstall tfenv tgenv   # mise los reemplaza
+rm -rf ~/.oh-my-zsh          # antidote + starship lo reemplazan
+brew uninstall stow          # chezmoi lo reemplaza
+```
 
 ## Windows
 

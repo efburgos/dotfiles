@@ -3,36 +3,79 @@
 # Editá estas listas y corré `chezmoi apply`: los scripts run_once
 # se re-ejecutan solos cuando su contenido cambia (y estas listas
 # forman parte de ese contenido).
-# Heredero de mac-brew.txt / linux-apt.txt del fork viejo.
+#
+# Lista Mac generada a partir del entorno real (brew list, 2026-07-31).
 # =============================================================
 packages:
   darwin:
     brews:
+      # --- básicos ---
       - git
       - curl
       - wget
+      - zsh
+      - gh
+      - git-filter-repo
+      # --- terminal / productividad ---
       - jq
       - yq
       - ripgrep
-      - fzf
-      - bat
-      - eza
+      - fzf          # nuevo: Ctrl-R historia difusa (integrado en .zshrc)
+      - bat          # nuevo: cat con colores (alias en .aliases)
       - tree
       - htop
+      - watch
+      - ncdu
+      - midnight-commander
       - tmux
       - shellcheck
+      # --- seguridad / secretos ---
+      - age
+      - sops
       - gnupg
-      - watch
-      - awscli
-      - azure-cli
+      - pinentry-mac
+      # --- kubernetes ---
+      - kubernetes-cli   # kubectl
+      - helm
+      - kustomize
+      - kubecm
+      - k9s          # nuevo: TUI de clusters, complementa kubecm
+      - flux
+      # --- clouds ---
       - oci-cli
-      - gh
+      - awscli       # no lo tenías instalado; agregado porque trabajás con AWS (borralo si no)
+      - azure-cli    # ídem Azure
+      # --- media / docs ---
+      - ffmpeg
+      - exiftool
+      - pandoc
+      # --- datos / lenguajes ---
+      - node
+      - uv
+      - postgresql@18
+      - rclone
+      # --- red ---
+      - nmap
+      - telnet
+      # --- AI tooling ---
+      - aider
+      - opencode
     casks:
-      - visual-studio-code
-      - docker-desktop
-      - google-chrome
+      - claude-code
+      - gcloud-cli
+      - karabiner-elements
+      - ngrok
       - slack
-      - google-cloud-sdk
+      - telegram
+      - spotify
+      - sublime-text
+      - tunnelblick
+      - protonvpn
+      - licecap
+      - macdown
+      - nvalt
+      - scout
+      - textmate
   linux:
     apt:
       # básicos para operar este repo
@@ -59,13 +102,10 @@ packages:
     # Solo en Linux de escritorio (se saltean en WSL)
     apt_desktop:
       - flameshot
-  # Herramientas DevOps con versión gestionada por mise
-  # (se instalan en run_once_after_20-devops-tools.sh)
+  # Herramientas con versión gestionada por mise (reemplaza tfenv/tgenv:
+  # mise respeta los archivos .terraform-version / .terragrunt-version
+  # que ya tengas en tus proyectos). kubectl/helm/kustomize van por brew.
   mise:
     - terraform
     - terragrunt
     - opentofu
-    - kubectl
-    - helm
-    - k9s
-    - kustomize
