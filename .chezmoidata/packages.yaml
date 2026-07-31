@@ -136,3 +136,9 @@ packages:
     - terraform
     - terragrunt
     - opentofu
+  # Globales de npm (inventario real: npm ls -g, 2026-07-31)
+  npm_global:
+    - pnpm
+    - "@qwen-code/qwen-code"
+    - ecc-universal
+    - mcp-ssh-manager

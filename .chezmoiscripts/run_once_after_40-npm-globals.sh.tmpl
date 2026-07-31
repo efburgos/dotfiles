@@ -1,0 +1,14 @@
+#!/bin/bash
+# Instala los paquetes globales de npm declarados en packages.yaml
+# (requiere node, que se instala por brew en Mac; en Linux instalalo
+# aparte si lo necesitás — no está en la lista de apt)
+set -euo pipefail
+
+if ! command -v npm >/dev/null 2>&1; then
+  echo "npm no disponible; salteando globales de npm"
+  exit 0
+fi
+
+echo "Instalando globales de npm..."
+npm install -g {{ range .packages.npm_global }}{{ . | quote }} {{ end }}
+echo "npm globals OK"
